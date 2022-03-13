@@ -172,6 +172,65 @@ def neighbors2(pattern, d):
 print(len(neighbors2("CCAGTCAATG", 1)))
 
 
+
+
+
+def HammingDistance(seq1, seq2):
+    return len([i for i in range(len(seq1)) if seq1[i] != seq2[i]])
+
+def ImmediateNeighbors(pattern):
+    neighbor = set()
+    nset = {'A', 'C', 'G', 'T'}
+    for i in range(len(pattern)):
+        for n in nset:
+            neighbor.add(pattern[:i]+n+pattern[i+1:])
+    return neighbor
+
+def Neighbors(pattern, d):
+    if d == 0:
+        return {pattern}
+    ineighbor = ImmediateNeighbors(pattern)
+    neighbor = ineighbor
+    for j in range(d-1):
+        for p in ineighbor:
+            neighbor = neighbor.union(ImmediateNeighbors(p))
+        ineighbor = neighbor
+    return neighbor
+
+
+def DoesPatternAppear(pattern, text, d):
+    k = len(pattern)
+    l = len(text)
+    for i in range(l-k+1):
+        if HammingDistance(pattern, text[i:i+k]) <= d:
+            return True
+    return False      
+    
+def MotifEnumeration(Dna, k, d):
+    patterns = set()
+    neighbor = set()
+    text = Dna[0]
+    for i in range(len(text)-k+1):
+        n = Neighbors(text[i:i+k], d)
+        neighbor = neighbor.union(n)
+    for n in neighbor:
+        ValidPattern = True
+        for i in range(1, len(Dna)):
+            if not DoesPatternAppear(n, Dna[i], d):
+                ValidPattern = False
+                break
+        if ValidPattern:
+            patterns.add(n)
+    return patterns        
+
+
+Dna= ["CCAGGGTTATGCACTGCGTGGACCG", "GGGGCTTGAGAGCATCTCCGAACAT", "CTAGCTCTCTCAAGGGAGCATCCCG", "GGTGAATCCGGAGGAGTTATAAGAC", "GCCCGGATCATGGAAGATCTCCCAA", "CACCGGATCAGACTGTTTCGACGCT"]
+k = 5
+d = 2
+
+print (' '.join(MotifEnumeration(Dna, k, d)))
+
+
 # generate a count matrix from an arbitrary list of strings Motifs
 
 # Input:  A set of kmers Motifs
