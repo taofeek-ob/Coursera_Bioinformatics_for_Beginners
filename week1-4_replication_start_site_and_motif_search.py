@@ -148,7 +148,31 @@ def ApproximatePatternCount(Pattern, Text, d):
             positions.append(i)
     return len(positions)
 
-## generate a count matrix from an arbitrary list of strings Motifs
+#neighbours
+
+chars = "ACGT"
+
+def neighbors(pattern, d):
+    assert(d <= len(pattern))
+
+    if d == 0:
+        return [pattern]
+
+    r2 = neighbors(pattern[1:], d-1)
+    r = [c + r3 for r3 in r2 for c in chars if c != pattern[0]]
+
+    if (d < len(pattern)):
+        r2 = neighbors(pattern[1:], d)
+        r += [pattern[0] + r3 for r3 in r2]
+
+    return r
+def neighbors2(pattern, d):
+    return sum([neighbors(pattern, d2) for d2 in range(d + 1)], [])
+# print(ApproximatePatternCount(Pattern, Text, d))
+print(len(neighbors2("CCAGTCAATG", 1)))
+
+
+# generate a count matrix from an arbitrary list of strings Motifs
 
 # Input:  A set of kmers Motifs
 # Output: Count(Motifs)
